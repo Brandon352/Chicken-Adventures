@@ -1,6 +1,7 @@
 package MemoryGame;
 
 import byowTools.RandomUtils;
+import edu.princeton.cs.algs4.ST;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.Color;
@@ -27,6 +28,8 @@ public class MemoryGame {
     private static final String[] ENCOURAGEMENT = {"You can do this!", "I believe in you!",
                                                    "You got this!", "You're a star!", "Go Bears!",
                                                    "Too easy for you!", "Wow, so impressive!"};
+    private String encouragement;
+    private String status;
 
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -58,7 +61,12 @@ public class MemoryGame {
 
     public String generateRandomString(int n) {
         //TODO: Generate random string of letters of length n
-        return null;
+        StringBuilder returnString = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            int nextIndex = rand.nextInt(0, 26);
+            returnString.append(CHARACTERS[nextIndex]);
+        }
+        return returnString.toString();
     }
 
     public void drawFrame(String s) {
@@ -72,28 +80,79 @@ public class MemoryGame {
 
         //TODO: If the game is not over, display encouragement, and let the user know if they
         // should be typing their answer or watching for the next round.
-        
+
+        Font fontSmall = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(fontSmall);
+        StdDraw.rectangle(0, height, width, height/13);
+        StdDraw.textLeft(0, height - 1.5, "Round:" + this.round);
+        StdDraw.text(width/2, height - 1.5,  this.status);
+        StdDraw.textRight(width, height - 1.5, this.encouragement);
 
         StdDraw.show();
     }
 
     public void flashSequence(String letters) {
         //TODO: Display each character in letters, making sure to blank the screen between letters
+        for (char letter: letters.toCharArray()) {
+            int index = rand.nextInt(0, 6);
+            this.encouragement = ENCOURAGEMENT[index];
+            drawFrame(Character.toString(letter));
+            StdDraw.pause(1000);
+            drawFrame("");
+            StdDraw.pause(500);
+
+        }
     }
 
     public String solicitNCharsInput(int n) {
         //TODO: Read n letters of player input
-        return null;
+        StringBuilder returnString = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            while (StdDraw.hasNextKeyTyped()) {
+                returnString.append(StdDraw.nextKeyTyped());
+            }
+        }
+        return returnString.toString();
     }
 
     public void startGame() {
         //TODO: Set any relevant variables before the game starts
         this.gameOver = false;
+        this.round = 1;
+        this.playerTurn = false;
 
         //TODO: Establish Engine loop
         while (!gameOver) {
-            drawFrame("You should implement this game!");
+            String randomString = generateRandomString(this.round);
+            this.status = "Watch!";
+            int indexMotivation = rand.nextInt(0, 6);
+            this.encouragement = ENCOURAGEMENT[indexMotivation];
+            drawFrame("Round: " + this.round);
             StdDraw.pause(1000);
+            flashSequence(randomString);
+            StringBuilder responseString = new StringBuilder();
+            String past = "";
+
+            while (responseString.length() != this.round) {
+                String input = solicitNCharsInput(this.round);
+                if (!past.equals(input)) {
+                    int index = rand.nextInt(0, 6);
+                    this.encouragement = ENCOURAGEMENT[index];
+                    past = solicitNCharsInput(this.round);
+                }
+                this.status = "Type!";
+                responseString.append(input);
+                drawFrame(responseString.toString());
+            }
+
+            if (!responseString.toString().equals(randomString)) {
+                this.gameOver = true;
+            } else {
+                this.status = "Correct!";
+                drawFrame(responseString.toString());
+                StdDraw.pause(500);
+                this.round += 1;
+            }
         }
 
         this.drawFrame("Game Over! You made it to round: " + this.round);
