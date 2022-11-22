@@ -1,7 +1,7 @@
 package byow.Core;
-
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import edu.princeton.cs.algs4.In;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -45,8 +45,28 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        input = input.toUpperCase();
+        int Nindex = input.indexOf("N");
+        int Sindex = input.indexOf("S");
 
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        if (Nindex < 0) {
+            throw new IllegalArgumentException("Input string must start with 'N'");
+        } else if (Sindex < 0) {
+            throw new IllegalArgumentException("Input string must include 'S'");
+        } else if (Sindex < Nindex) {
+            throw new IllegalArgumentException("'S' must precede 'N' in the input string");
+        }
+        input = input.substring(Nindex + 1, Sindex);
+        int seed = Integer.parseInt(input);
+        TETile[][] randomWorld= new TETile[WIDTH][HEIGHT];
+        MakeWorld rw = new MakeWorld(randomWorld, WIDTH, HEIGHT, seed);
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(randomWorld);
+        return randomWorld;
+    }
+
+    public char getNextKey(String input, int index) {
+        char returnChar = input.charAt(index);
+        return returnChar;
     }
 }
