@@ -185,7 +185,7 @@ public class MakeWorld {
                 roomToInitial.get(first).y + roomToSize.get(first).y);
         int xdistance = roomToCenter.get(second).x - top.x;
         int ydistance = roomToCenter.get(second).y - top.y;
-        if (ydistance > 0) {
+        if (ydistance >= 0) {
             tiles[top.x][top.y - 1] = Tileset.FLOOR;
         }
         for (int i = 0; i < ydistance + 2; i++) {
@@ -257,7 +257,7 @@ public class MakeWorld {
                 roomToInitial.get(first).y + roomToSize.get(first).y);
         int xdistance = -(roomToCenter.get(second).x - top.x);
         int ydistance = roomToCenter.get(second).y - top.y;
-        if (ydistance > 0) {
+        if (ydistance >= 0) {
             tiles[top.x][top.y - 1] = Tileset.FLOOR;
         }
         for (int i = 0; i < ydistance + 1; i++) {
