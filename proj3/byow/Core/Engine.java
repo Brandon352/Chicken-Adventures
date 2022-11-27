@@ -18,48 +18,51 @@ public class Engine {
     String menuInput;
     String seedInput;
     public static TETile[][] randomWorld;
+    int seed;
     Avatar avatar;
+    StringBuilder memory;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
-//        TODO allow for random location spawn for AVATAR
-//        Random randx = new Random(Long.parseLong(seedInput));
-//        Random randy = new Random(Long.parseLong(seedInput));
-
 //        Displays the main menu and listens for USER input
         menuInput = UserInterface.MainMenu();
         if (menuInput.equals("N")) {
 //            Displays the seed menu and listens for USER input
             seedInput = UserInterface.seedMenu();
-//            avatar = new Avatar(5, 7, randomWorld);
-//            Avatar.placeTheAvatar();
+
             interactWithInputString(seedInput);
-//            TODO allow the AVATAR to be above the map (will have to change MakeWorld)
-            randomWorld[5][7] = Tileset.AVATAR;
+
+            Random randx = new Random(seed);
+            Random randy = new Random(seed);
+
+            while (true) {
+                int randomx = randx.nextInt(0, WIDTH);
+                int randomy = randy.nextInt(0, HEIGHT);
+                if (randomWorld[randomx][randomy].equals(Tileset.FLOOR)) {
+                    randomWorld[randomx][randomy] = Tileset.AVATAR;
+                    avatar = new Avatar(randomx, randomy, randomWorld);
+                    break;
+                }
+            }
+
+            ter.renderFrame(randomWorld);
         }
 
-//        Attempt to randomize but probably can be done in MakeWorld
-//        while (true) {
-//            int randomx = RandomUtils.uniform(randx, 0, WIDTH);
-//            int randomy = RandomUtils.uniform(randy, 0, HEIGHT);
-//            if (randomWorld[randomx][randomx].equals(Tileset.FLOOR)) {
-//                avatar = new Avatar(randomx, randomy, randomWorld);
-//                break;
-//                }
-//            }
-
-//        StringBuilder memory = new StringBuilder();
+        memory = new StringBuilder();
 
 //        Constantly refreshes so that the cursor is always detecting its location
         while (true) {
             HUD();
-//            if (StdDraw.hasNextKeyTyped()) {
-//                String moveKey = String.valueOf(StdDraw.nextKeyTyped()).toUpperCase();
-//                avatar.move(moveKey);
-//                memory.append(moveKey);
+            if (StdDraw.hasNextKeyTyped()) {
+                String moveKey = String.valueOf(StdDraw.nextKeyTyped()).toUpperCase();
+                avatar.move(moveKey);
+                ter.renderFrame(randomWorld);
+                memory.append(moveKey);
+//                System.out.println(moveKey);
+        }
             }
         }
 
@@ -74,7 +77,7 @@ public class Engine {
             StdDraw.setPenColor(Color.ORANGE);
             StdDraw.textLeft(2, HEIGHT - 2, randomWorld[x][y].description());
             StdDraw.show();
-            StdDraw.pause(10);
+//            StdDraw.pause(10);
         }
     }
 
@@ -119,11 +122,12 @@ public class Engine {
             throw new IllegalArgumentException("'S' must precede 'N' in the input string");
         }
         input = input.substring(Nindex + 1, Sindex);
-        int seed = Integer.parseInt(input);
+        seed = Integer.parseInt(input);
         randomWorld = new TETile[WIDTH][HEIGHT];
         MakeWorld rw = new MakeWorld(randomWorld, WIDTH, HEIGHT, seed);
         ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(randomWorld);
+//        randomWorld[5][7] = Tileset.AVATAR;
+//        ter.renderFrame(randomWorld);
         return randomWorld;
     }
 

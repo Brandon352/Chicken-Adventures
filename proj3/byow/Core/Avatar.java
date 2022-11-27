@@ -15,10 +15,6 @@ public class Avatar {
         randomWorld = rw;
     }
 
-    public static void placeTheAvatar() {
-        randomWorld[x][y] = Tileset.AVATAR;
-    }
-
     public static boolean directions(String direction) {
         return switch (direction) {
             case "W" -> randomWorld[x][y + 1].equals(Tileset.FLOOR);
@@ -30,24 +26,28 @@ public class Avatar {
     }
 
     public void move(String direction) {
-        if (directions("W")) {
+        if (direction.equals("W") && directions("W")) {
             randomWorld[x][y] = Tileset.FLOOR;
             randomWorld[x][y + 1] = Tileset.AVATAR;
+//            System.out.println("Moving Up");
             y++;
         }
-        if (directions("S")) {
+        if (direction.equals("S") && directions("S")) {
             randomWorld[x][y] = Tileset.FLOOR;
             randomWorld[x][y - 1] = Tileset.AVATAR;
+//            System.out.println("Moving Down");
             y--;
         }
-        if (directions("D")) {
+        if (direction.equals("D") && directions("D")) {
             randomWorld[x][y] = Tileset.FLOOR;
             randomWorld[x + 1][y] = Tileset.AVATAR;
+//            System.out.println("Moving Right");
             x++;
         }
-        if (directions("A")) {
+        if (direction.equals("A") && directions("A")) {
             randomWorld[x][y] = Tileset.FLOOR;
             randomWorld[x - 1][y] = Tileset.AVATAR;
+//            System.out.println("Moving Left");
             x--;
         }
     }
