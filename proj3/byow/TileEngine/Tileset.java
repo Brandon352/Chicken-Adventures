@@ -22,7 +22,7 @@ public class Tileset {
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you",
             Paths.get("byow", "Images", "chick.jpg").toString());
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
-            "wall", Paths.get("byow", "Images", "fence.jpg").toString());
+            "wall", Paths.get("byow", "Images", "wood.jpg").toString());
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
             "floor", Paths.get("byow", "Images", "grass.jpg").toString());
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
