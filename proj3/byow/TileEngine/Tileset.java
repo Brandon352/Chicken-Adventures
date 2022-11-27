@@ -1,6 +1,8 @@
 package byow.TileEngine;
 
 import java.awt.Color;
+import java.nio.file.Paths;
+
 
 /**
  * Contains constant tile objects, to avoid having to remake the same tiles in different parts of
@@ -17,6 +19,12 @@ import java.awt.Color;
  */
 
 public class Tileset {
+    /** Return the concatentation of FIRST and OTHERS into a File designator,
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
+     *  method. */
+    public static java.io.File join(String first,String...others){
+        return Paths.get(first,others).toFile();
+    }
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
             "wall");

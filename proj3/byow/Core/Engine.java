@@ -52,16 +52,23 @@ public class Engine {
         }
 
         memory = new StringBuilder();
+        TETile[][] cloneWorld;
 
 //        Constantly refreshes so that the cursor is always detecting its location
         while (true) {
             HUD();
             if (StdDraw.hasNextKeyTyped()) {
                 String moveKey = String.valueOf(StdDraw.nextKeyTyped()).toUpperCase();
-                avatar.move(moveKey);
-                ter.renderFrame(randomWorld);
-                memory.append(moveKey);
-//                System.out.println(moveKey);
+                if (!moveKey.equals("L")) {
+                    avatar.move(moveKey);
+                    cloneWorld = TETile.copyOf(randomWorld);
+                    ambition(Avatar.x, Avatar.y, cloneWorld);
+                    ter.renderFrame(cloneWorld);
+                    memory.append(moveKey);
+                } else {
+                    avatar.move(moveKey);
+                    ter.renderFrame(randomWorld);
+                }
         }
             }
         }
@@ -77,7 +84,21 @@ public class Engine {
             StdDraw.setPenColor(Color.ORANGE);
             StdDraw.textLeft(2, HEIGHT - 2, randomWorld[x][y].description());
             StdDraw.show();
-//            StdDraw.pause(10);
+        }
+    }
+
+    public void ambition(int x, int y, TETile[][] world) {
+        for (int posx = 0; posx < WIDTH; posx ++) {
+            for (int posy = 0; posy < HEIGHT; posy++) {
+                if ((posx == (x - 1) || posx == (x) || posx == (x + 1) || posx == (x - 2) || posx == (x + 2)
+                        || posx == (x - 3) || posx == (x + 3)) &&
+                        (posy == (y - 1) || posy == y || posy == (y + 1) || posy == (y - 2) || posy == (y + 2)
+                                || posy == (y - 3) || posy == (y + 3))) {
+                        continue;
+                } else {
+                    world[posx][posy] = Tileset.NOTHING;
+                }
+            }
         }
     }
 
