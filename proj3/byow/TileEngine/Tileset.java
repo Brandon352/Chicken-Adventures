@@ -22,7 +22,7 @@ public class Tileset {
     public static String join(String first,String...others){
         return Paths.get(first,others).toString();
     }
-    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you", join("proj3", "Chick"));
+    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you", Paths.get(".", "proj3", "byow", "chick.jpg").toString());
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
             "wall");
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
