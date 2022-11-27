@@ -19,13 +19,10 @@ import java.nio.file.Paths;
  */
 
 public class Tileset {
-    /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
-     *  method. */
-    public static java.io.File join(String first,String...others){
-        return Paths.get(first,others).toFile();
+    public static String join(String first,String...others){
+        return Paths.get(first,others).toString();
     }
-    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
+    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you", join("proj3", "Chick"));
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
             "wall");
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
