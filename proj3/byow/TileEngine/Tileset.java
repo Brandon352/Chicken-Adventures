@@ -19,14 +19,12 @@ import java.nio.file.Paths;
  */
 
 public class Tileset {
-    public static String join(String first,String...others){
-        return Paths.get(first,others).toString();
-    }
-    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you", Paths.get(".", "proj3", "byow", "chick.jpg").toString());
+    public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you",
+            Paths.get("byow", "Images", "chick.jpg").toString());
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
-            "wall");
+            "wall", Paths.get("byow", "Images", "fence.jpg").toString());
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
-            "floor");
+            "floor", Paths.get("byow", "Images", "grass.jpg").toString());
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
