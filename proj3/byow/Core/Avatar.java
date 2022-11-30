@@ -13,6 +13,7 @@ public class Avatar {
         x = posx;
         y = posy;
         randomWorld = rw;
+        randomWorld[x][y] = Tileset.AVATAR;
     }
 
     public static boolean directions(String direction) {

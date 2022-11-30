@@ -15,7 +15,7 @@ public class UserInterface {
     /** Master UI for all USER interactivity **/
     public UserInterface (Engine eng) {
         this.engine = eng;
-        ter.initialize(WIDTH, HEIGHT, 4, 5);
+        ter.initialize(WIDTH, HEIGHT, 0,0);
     }
 
 /** Main Menu **/

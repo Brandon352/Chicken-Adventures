@@ -17,9 +17,9 @@ public class Main {
             Engine engine = new Engine();
             engine.interactWithKeyboard();
         }
-    }
 //        Engine engine = new Engine();
-//        engine.interactWithInputString("N843771572S");
-//        //887722
+//        engine.interactWithInputString("N843771572Sssd");
+    }
+        //887722
 //    }
 }

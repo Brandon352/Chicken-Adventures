@@ -2,6 +2,8 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Out;
 import edu.princeton.cs.algs4.StdDraw;
 
 
@@ -21,6 +23,14 @@ public class Engine {
     int seed;
     Avatar avatar;
     StringBuilder memory;
+    StringBuilder movementMemory;
+    String filename = "savedWorld.txt";
+    Out out;
+
+    Random randx = new Random(seed);
+    Random randy = new Random(seed);
+    int randomx;
+    int randomy;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -29,18 +39,22 @@ public class Engine {
     public void interactWithKeyboard() {
 //        Displays the main menu and listens for USER input
         menuInput = UserInterface.MainMenu();
-        if (menuInput.equals("N")) {
+        while (!menuInput.equals("Q") && !menuInput.equals("N") && !menuInput.equals("L")) {
+            menuInput = UserInterface.MainMenu();
+        }
+
+        if (menuInput.equals("Q")) {
+            return;
+        }
+
+        else if (menuInput.equals("N")) {
 //            Displays the seed menu and listens for USER input
             seedInput = UserInterface.seedMenu();
-
             interactWithInputString(seedInput);
 
-            Random randx = new Random(seed);
-            Random randy = new Random(seed);
-
             while (true) {
-                int randomx = randx.nextInt(0, WIDTH);
-                int randomy = randy.nextInt(0, HEIGHT);
+                randomx = randx.nextInt(0, WIDTH);
+                randomy = randy.nextInt(0, HEIGHT);
                 if (randomWorld[randomx][randomy].equals(Tileset.FLOOR)) {
                     randomWorld[randomx][randomy] = Tileset.AVATAR;
                     avatar = new Avatar(randomx, randomy, randomWorld);
@@ -51,7 +65,54 @@ public class Engine {
             ter.renderFrame(randomWorld);
         }
 
+        else if (menuInput.equals("L")) {
+            TETile[][] cloneWorld2;
+            In in = new In(filename);
+
+            if (in.hasNextLine()) {
+                String inputLine = in.readString();
+                if (in.hasNextLine()) {
+                    if (in.hasNextLine()) {
+                        int xStart = in.readInt();
+                        int yStart = in.readInt();
+                        interactWithInputString(inputLine);
+                        avatar = new Avatar(xStart, yStart, randomWorld);
+//                        ter.renderFrame(randomWorld);
+                    } else {
+                        interactWithInputString(inputLine);
+                        while (true) {
+                            randomx = randx.nextInt(0, WIDTH);
+                            randomy = randy.nextInt(0, HEIGHT);
+                            if (randomWorld[randomx][randomy].equals(Tileset.FLOOR)) {
+                                randomWorld[randomx][randomy] = Tileset.AVATAR;
+                                avatar = new Avatar(randomx, randomy, randomWorld);
+                                break;
+                            }
+                        }
+
+
+                    }
+
+                    ter.renderFrame(randomWorld);
+                } else {
+                    interactWithInputString(inputLine);
+                    while (true) {
+                        randomx = randx.nextInt(0, WIDTH);
+                        randomy = randy.nextInt(0, HEIGHT);
+                        if (randomWorld[randomx][randomy].equals(Tileset.FLOOR)) {
+                            randomWorld[randomx][randomy] = Tileset.AVATAR;
+                            avatar = new Avatar(randomx, randomy, randomWorld);
+                            break;
+                        }
+                    } ter.renderFrame(randomWorld);
+                }
+            } else {
+                return;
+            }
+        }
+
         memory = new StringBuilder();
+        movementMemory = new StringBuilder();
         TETile[][] cloneWorld;
 
 //        Constantly refreshes so that the cursor is always detecting its location
@@ -59,12 +120,24 @@ public class Engine {
             HUD();
             if (StdDraw.hasNextKeyTyped()) {
                 String moveKey = String.valueOf(StdDraw.nextKeyTyped()).toUpperCase();
+
                 if (!moveKey.equals("L")) {
                     avatar.move(moveKey);
                     cloneWorld = TETile.copyOf(randomWorld);
                     ambition(Avatar.x, Avatar.y, cloneWorld);
                     ter.renderFrame(cloneWorld);
+                    if (Avatar.directions(moveKey)) {
+                        movementMemory.append(moveKey);
+                    }
                     memory.append(moveKey);
+
+                    if (quitSave(moveKey, String.valueOf(memory))) {
+                        out.println(Avatar.x);
+                        out.println(Avatar.y);
+                        out.println(memory.substring(0, memory.length() - 2));
+                        return;
+                    }
+
                 } else {
                     avatar.move(moveKey);
                     ter.renderFrame(randomWorld);
@@ -87,6 +160,7 @@ public class Engine {
         }
     }
 
+/** Creates and blacks out the map except for a 3x3 square around the player **/
     public void ambition(int x, int y, TETile[][] world) {
         for (int posx = 0; posx < WIDTH; posx ++) {
             for (int posy = 0; posy < HEIGHT; posy++) {
@@ -100,6 +174,10 @@ public class Engine {
                 }
             }
         }
+    }
+
+    public boolean quitSave(String moveKey, String movementMem) {
+        return moveKey.equals("Q") && (movementMem.indexOf(":") == movementMem.length() - 2);
     }
 
     /**
@@ -131,6 +209,9 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+
+
+        out = new Out(filename);
         input = input.toUpperCase();
         int Nindex = input.indexOf("N");
         int Sindex = input.indexOf("S");
@@ -142,13 +223,38 @@ public class Engine {
         } else if (Sindex < Nindex) {
             throw new IllegalArgumentException("'S' must precede 'N' in the input string");
         }
+
+        out.println(input);
+
         input = input.substring(Nindex + 1, Sindex);
         seed = Integer.parseInt(input);
         randomWorld = new TETile[WIDTH][HEIGHT];
         MakeWorld rw = new MakeWorld(randomWorld, WIDTH, HEIGHT, seed);
         ter.initialize(WIDTH, HEIGHT);
 //        randomWorld[5][7] = Tileset.AVATAR;
-//        ter.renderFrame(randomWorld);
+        ter.renderFrame(randomWorld);
+
+        if (input.length() > Sindex + 1) {
+            while (true) {
+                randomx = randx.nextInt(0, WIDTH);
+                randomy = randy.nextInt(0, HEIGHT);
+                if (randomWorld[randomx][randomy].equals(Tileset.FLOOR)) {
+                    randomWorld[randomx][randomy] = Tileset.AVATAR;
+                    avatar = new Avatar(randomx, randomy, randomWorld);
+                    break;
+                }
+
+                String movementLine = input.substring(Sindex + 1).toUpperCase();
+                String[] inputs = movementLine.split("");
+                for (String movement : inputs) {
+                    avatar.move(movement);
+                    ter.renderFrame(randomWorld);
+                }
+
+                out.println(Avatar.x);
+                out.println(Avatar.y);
+            }
+        }
         return randomWorld;
     }
 
